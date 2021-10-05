@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>A Basic HTML5 Template</title>
+    <meta
+      name="description"
+      content="A simple HTML5 Template for new projects."
+    />
+    <meta name="author" content="SitePoint" />
+
+    <meta property="og:title" content="A Basic HTML5 Template" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://www.sitepoint.com/a-basic-html5-template/"
+    />
+    <meta
+      property="og:description"
+      content="A simple HTML5 Template for new projects."
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,900|Source+Sans+Pro:300,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static '' %}css/styles.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>API docs</h1>
+      <h2>< github ></h2>
+    </header>
+    <main>
+      <section class="api">
+        <div class="section_header">
+          <p><strong class="clr-accent">GET</strong> retrieve all recepies</p>
+          <pre>{{ request.build_absolute_uri }}v1/receipes/</pre>
+        </div>
+
+        <div class="section_params">
+          <h3>Query parameters</h3>
+          <div class="api__item">
+            <span>?search={string}</span>
+            <span>filtering <strong>name</strong> </span>
+          </div>
+          <div class="api__item">
+            <span>?page={integer}</span>
+            <span>pagination - page number</span>
+          </div>
+          <div class="api__item">
+            <span>?page_size={integer}</span>
+            <span>pagination - page size <br />(default: 50, max: 100)</span>
+          </div>
+
+          <h3>Schema</h3>
+          <div class="api__item">
+            <span>name</span>
+            <span>string</span>
+          </div>
+          <div class="api__item">
+            <span>serving_size</span>
+            <span>string</span>
+          </div>
+        </div>
+        <div class="section_response">
+          <p class="response__header">
+            Response 200
+            <small>application/json</small>
+          </p>
+          <pre>
+  {
+      "name": "Spaghetti Bolognese",
+      "serving_size": "3-5",
+      "preparing_time": "15 min",
+      "time_on_high": "2 godz"
+  } 
+            </pre
+          >
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
