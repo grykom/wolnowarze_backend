@@ -6,7 +6,7 @@ class ReceipeSerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
     class Meta:
         model = Receipe
-        fields = ['name', 'serving_size', 'preparing_time', 'time_on_high', 'time_on_low', 'images']
+        fields = ['receipe_id', 'name', 'serving_size', 'preparing_time', 'time_on_high', 'time_on_low', 'images']
 
 
 class ReceipeGallerySerializer(serializers.ModelSerializer):
