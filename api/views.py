@@ -29,6 +29,7 @@ class ReceipesView(
 ):
     pagination_class = StandardResultsSetPagination
     serializer_class = ReceipeSerializer
+    lookup_field = 'receipe_id'
 
     def get_queryset(self):
         queryset = Receipe.objects.all()
