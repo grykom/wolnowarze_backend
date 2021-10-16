@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.template.defaultfilters import slugify
 
+
 class Receipe(models.Model):
     receipe_id = models.IntegerField(unique=True)
     url = models.CharField(max_length=255)
@@ -14,9 +15,10 @@ class Receipe(models.Model):
     receipe_ingredients = models.TextField()
     receipe_how_to = models.TextField()
     views = models.IntegerField(default=1)
+    likes = models.IntegerField(default=0)
 
     def __str__(self):
-        return " ".join([str(self.receipe_id), self.name]) 
+        return " ".join([str(self.receipe_id), self.name])
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -24,12 +26,13 @@ class Receipe(models.Model):
         return super().save(*args, **kwargs)
 
     class Meta:
-        unique_together = ['receipe_id', 'slug']
-
+        unique_together = ["receipe_id", "slug"]
 
 
 class ReceipeImage(models.Model):
-    receipe = models.ForeignKey(Receipe, on_delete=models.CASCADE, related_name="images")
+    receipe = models.ForeignKey(
+        Receipe, on_delete=models.CASCADE, related_name="images"
+    )
     image = models.CharField(max_length=255)
 
     def __str__(self):
