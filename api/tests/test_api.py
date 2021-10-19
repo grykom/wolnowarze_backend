@@ -280,5 +280,14 @@ class ReceipeImageAPITests(APITestCase):
 
     def test_gallery_images_count(self):
         url = reverse('api:gallery')
-        response_get = self.client.get(url, format='json')
+        response_get = self.client.get(url, format='json')        
         self.assertEqual(len(response_get.data[0]['images']), 1) 
+
+        saved_receipe = Receipe.objects.get(receipe_id=1)
+        ReceipeImage.objects.create(
+            receipe=saved_receipe,
+            image='lorem_ipsum.jpg'
+        )
+        response_get = self.client.get(url, format='json')        
+        self.assertEqual(len(response_get.data[0]['images']), 2)
+
