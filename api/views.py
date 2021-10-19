@@ -1,6 +1,5 @@
-from django.db.models import query
-from django.shortcuts import get_object_or_404, render
-from rest_framework import viewsets, mixins, serializers
+from django.shortcuts import render
+from rest_framework import status, viewsets, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
@@ -15,8 +14,6 @@ from .serializers import (
 
 
 def home(request):
-    """Django view Home"""
-
     content = {}
     return render(request, "api/home.html", content)
 
@@ -28,7 +25,9 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class ReceipesView(
-    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
 ):
     pagination_class = StandardResultsSetPagination
     serializer_class = ReceipeSerializer
@@ -41,20 +40,31 @@ class ReceipesView(
             queryset = queryset.filter(name__contains=findit)
         return queryset
 
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, *args, **kwargs):
         instance = self.get_object()
         instance.views += 1
-        query_param = self.request.query_params.get("likes_counter")
-        if query_param == "up":
-            instance.likes += 1
-        if query_param == "down":
-            instance.likes -= 1
         instance.save()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+    def likes(self, *args, **kwargs):
+        up_down_action = kwargs['up_down']
+        if up_down_action in ['up', 'down']:
+            instance = self.get_object()
+            if up_down_action == 'up':
+                instance.likes += 1
+            else:
+                instance.likes -= 1
+            instance.save()
+            return Response({ 'likes': instance.likes })
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-class NoIdeaReceipesView(mixins.ListModelMixin, viewsets.GenericViewSet):
+
+class NoIdeaReceipesView(
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+    ):
     serializer_class = ReceipeSerializer
 
     def get_queryset(self):
@@ -63,7 +73,7 @@ class NoIdeaReceipesView(mixins.ListModelMixin, viewsets.GenericViewSet):
             query_num.isnumeric()
             get_num = int(query_num)
         except (AttributeError, ValueError):
-            get_num = 3
+            get_num = 1
 
         all_values = Receipe.objects.values_list("id", flat=True)
         rand_entities = random.sample(list(all_values), get_num)
@@ -76,15 +86,14 @@ class WhySlowcookerView(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = WhySlowcooker.objects.all()
 
 
-class GalleryView(
-    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
-):
+class GalleryView(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = ReceipeGallerySerializer
 
     def get_queryset(self):
-
-        queryset = Receipe.objects.order_by("-id")[:9]
-        findit = self.request.query_params.get("filter")
-        if findit:
-            queryset = queryset[:10]
+        all_values = Receipe.objects.values_list("id", flat=True)
+        try:
+            rand_entities = random.sample(list(all_values), 9)
+        except ValueError:
+            rand_entities = random.sample(list(all_values), 1)
+        queryset = Receipe.objects.filter(id__in=rand_entities)
         return queryset

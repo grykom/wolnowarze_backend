@@ -17,16 +17,16 @@ class Receipe(models.Model):
     views = models.IntegerField(default=1)
     likes = models.IntegerField(default=0)
 
-    def __str__(self):
-        return " ".join([str(self.receipe_id), self.name])
+    class Meta:
+        unique_together = ["receipe_id", "slug"]
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-        return super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)    
 
-    class Meta:
-        unique_together = ["receipe_id", "slug"]
+    def __str__(self):
+        return " ".join([str(self.receipe_id), self.name])   
 
 
 class ReceipeImage(models.Model):
