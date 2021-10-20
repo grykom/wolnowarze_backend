@@ -4,8 +4,6 @@
   box-sizing: border-box;
 }
 
-/* Custom Properties, update these for your own design */
-
 :root {
   --ff-primary: "Source Sans Pro", sans-serif;
   --ff-secondary: "Source Code Pro", monospace;
@@ -22,8 +20,6 @@
   --bs: 0.25em 0.25em 0.75em rgba(0, 0, 0, 0.25),
     0.125em 0.125em 0.25em rgba(0, 0, 0, 0.15);
 }
-
-/* General styles */
 
 body {
   color: var(--clr-dark);

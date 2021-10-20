@@ -1,34 +1,34 @@
 from rest_framework import serializers
-from .models import Receipe, WhySlowcooker
+from .models import recipe, WhySlowcooker
 
 
-class ReceipeSerializer(serializers.ModelSerializer):
+class recipeSerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
 
     class Meta:
-        model = Receipe
+        model = recipe
         fields = [
-            "receipe_id",
+            "recipe_id",
             "name",
             "slug",
             "serving_size",
             "preparing_time",
             "time_on_high",
             "time_on_low",
-            "receipe_ingredients",
-            "receipe_how_to",
+            "recipe_ingredients",
+            "recipe_how_to",
             "images",
             "views",
             "likes",
         ]
 
 
-class ReceipeGallerySerializer(serializers.ModelSerializer):
+class recipeGallerySerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
 
     class Meta:
-        model = Receipe
-        fields = ["receipe_id", "name", "slug", "images"]
+        model = recipe
+        fields = ["recipe_id", "name", "slug", "images"]
 
 
 class WhySlowcookerSerializer(serializers.ModelSerializer):

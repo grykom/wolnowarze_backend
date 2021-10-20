@@ -2,13 +2,13 @@ from django.db.models import query
 from django.urls import  reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from ..models import Receipe, ReceipeImage, WhySlowcooker
+from ..models import recipe, recipeImage, WhySlowcooker
 
 
 class MethodsAPITests(APITestCase):
     def setUp(self):
-        Receipe.objects.create(
-            receipe_id = '1',
+        recipe.objects.create(
+            recipe_id = '1',
             url = 'https://www.crockpot.pl/przepis?p=1',
             name = 'Chicken salad',
             slug = 'chicken-salad',
@@ -16,8 +16,8 @@ class MethodsAPITests(APITestCase):
             preparing_time = '30 mins',
             time_on_high = '6h',
             time_on_low = '',
-            receipe_ingredients = 'Chicken, salad, peper, salt',
-            receipe_how_to = 'Place chicken in slow cooker, serve with salad'
+            recipe_ingredients = 'Chicken, salad, peper, salt',
+            recipe_how_to = 'Place chicken in slow cooker, serve with salad'
         )
         WhySlowcooker.objects.create(
             heading = 'Delicate',
@@ -28,21 +28,21 @@ class MethodsAPITests(APITestCase):
 
     """
     Ensure we can 
-        list/GET (receipes, no_idea_receipes, why_slowcooker, gallery), 
-        retrieve/GET (single receipe) data only,
-        change likes/POST (single receipe) only
+        list/GET (recipes, no_idea_recipes, why_slowcooker, gallery), 
+        retrieve/GET (single recipe) data only,
+        change likes/POST (single recipe) only
     """    
-    def test_list_receipes_only(self):            
-        url = reverse('api:receipes_list')
+    def test_list_recipes_only(self):            
+        url = reverse('api:recipes_list')
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.status_code, status.HTTP_200_OK)
 
-        data = {'receipe_id': '10'}
+        data = {'recipe_id': '10'}
         response_post = self.client.post(url, data, format='json')
         self.assertEqual(response_post.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def test_retrieve_receipe_only(self):
-        url = reverse('api:receipe', kwargs={'receipe_id':1})
+    def test_retrieve_recipe_only(self):
+        url = reverse('api:recipe', kwargs={'recipe_id':1})
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.status_code, status.HTTP_200_OK)
 
@@ -56,12 +56,12 @@ class MethodsAPITests(APITestCase):
         response_patch = self.client.patch(url, data, format='json')
         self.assertEqual(response_patch.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def test_list_no_idea_receipes_only(self):     
-        url = reverse('api:no_idea_receipes')
+    def test_list_no_idea_recipes_only(self):     
+        url = reverse('api:no_idea_recipes')
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.status_code, status.HTTP_200_OK)
 
-        data = {'receipe_id': '10'}
+        data = {'recipe_id': '10'}
         response_post = self.client.post(url, data, format='json')
         self.assertEqual(response_post.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -83,8 +83,8 @@ class MethodsAPITests(APITestCase):
         response_post = self.client.post(url, data, format='json')
         self.assertEqual(response_post.status_code, status.HTTP_405_METHOD_NOT_ALLOWED) 
 
-    def test_post_likes_receipe_method(self):
-        url = reverse('api:receipe_likes', kwargs={'receipe_id':1, 'up_down': 'up'})
+    def test_post_likes_recipe_method(self):
+        url = reverse('api:recipe_likes', kwargs={'recipe_id':1, 'up_down': 'up'})
         response_post = self.client.post(url, format='json')
         self.assertEqual(response_post.status_code, status.HTTP_200_OK)
 
@@ -92,10 +92,10 @@ class MethodsAPITests(APITestCase):
         self.assertEqual(response_get.status_code, status.HTTP_405_METHOD_NOT_ALLOWED) 
 
 
-class ReceipeAPITests(APITestCase):
+class recipeAPITests(APITestCase):
     def setUp(self):
-        Receipe.objects.create(
-            receipe_id = '1',
+        recipe.objects.create(
+            recipe_id = '1',
             url = 'https://www.crockpot.pl/przepis?p=1',
             name = 'Chicken salad',
             slug = 'chicken-salad',
@@ -103,12 +103,12 @@ class ReceipeAPITests(APITestCase):
             preparing_time = '30 mins',
             time_on_high = '6h',
             time_on_low = '',
-            receipe_ingredients = 'Chicken, salad, peper, salt',
-            receipe_how_to = 'Place chicken in slow cooker, serve with salad'
+            recipe_ingredients = 'Chicken, salad, peper, salt',
+            recipe_how_to = 'Place chicken in slow cooker, serve with salad'
         )
 
-        Receipe.objects.create(
-            receipe_id = '2',
+        recipe.objects.create(
+            recipe_id = '2',
             url = 'https://www.crockpot.pl/przepis?p=2',
             name = 'Lamb salad',
             slug = 'lamb-salad',
@@ -116,84 +116,84 @@ class ReceipeAPITests(APITestCase):
             preparing_time = '40 mins',
             time_on_high = '1h',
             time_on_low = '6h',
-            receipe_ingredients = 'Lamb, salad, peper, salt',
-            receipe_how_to = 'Place lamb in slow cooker, serve with salad'
+            recipe_ingredients = 'Lamb, salad, peper, salt',
+            recipe_how_to = 'Place lamb in slow cooker, serve with salad'
         )
 
-    def test_retrieving_receipes_list(self):
-        url = reverse('api:receipes_list')
+    def test_retrieving_recipes_list(self):
+        url = reverse('api:recipes_list')
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.data['count'], 2)
 
     """
-    Receipes list - query params - {search}, {page_size}, {page}
+    recipes list - query params - {search}, {page_size}, {page}
     """
-    def test_receipes_search_filter(self):
-        url = reverse('api:receipes_list') + "?search=Lamb"
+    def test_recipes_search_filter(self):
+        url = reverse('api:recipes_list') + "?search=Lamb"
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.data['count'], 1)
         self.assertEqual(response_get.data['results'][0]['name'], "Lamb salad")
 
-    def test_receipes_list_page_size_change(self):
-        url = reverse('api:receipes_list')
+    def test_recipes_list_page_size_change(self):
+        url = reverse('api:recipes_list')
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.data['next'], None)
 
-        url = reverse('api:receipes_list') + "?page_size=1"
+        url = reverse('api:recipes_list') + "?page_size=1"
         response_get = self.client.get(url, format='json')
         self.assertNotEqual(response_get.data['next'], None)
 
-    def test_receipes_list_page_number_change(self):
-        url = reverse('api:receipes_list') + "?page_size=1"
+    def test_recipes_list_page_number_change(self):
+        url = reverse('api:recipes_list') + "?page_size=1"
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.data['results'][0]['name'], "Chicken salad")
 
-        url = reverse('api:receipes_list') + "?page_size=1&page=2"
+        url = reverse('api:recipes_list') + "?page_size=1&page=2"
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.data['results'][0]['name'], "Lamb salad")
 
     """
-    Single receipe tests
+    Single recipe tests
     """
-    def test_retrieving_single_receipe(self):
-        url = reverse('api:receipe', kwargs={'receipe_id':1})
+    def test_retrieving_single_recipe(self):
+        url = reverse('api:recipe', kwargs={'recipe_id':1})
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.data['name'], "Chicken salad")
 
     """
-    Single receipe tests - POST likes / GET views
+    Single recipe tests - POST likes / GET views
     """
-    def test_post_likes_up_receipe(self):
-        url = reverse('api:receipe_likes', kwargs={'receipe_id':1, 'up_down': 'up'})
+    def test_post_likes_up_recipe(self):
+        url = reverse('api:recipe_likes', kwargs={'recipe_id':1, 'up_down': 'up'})
         response_post = self.client.post(url, format='json')
         self.assertEqual(response_post.data['likes'], 1)
         response_post = self.client.post(url, format='json')
         self.assertEqual(response_post.data['likes'], 2)
 
-    def test_post_likes_down_receipe(self):
-        url = reverse('api:receipe_likes', kwargs={'receipe_id':1, 'up_down': 'down'})
+    def test_post_likes_down_recipe(self):
+        url = reverse('api:recipe_likes', kwargs={'recipe_id':1, 'up_down': 'down'})
         response_post = self.client.post(url, format='json')
         self.assertEqual(response_post.data['likes'], -1)
         response_post = self.client.post(url, format='json')
         self.assertEqual(response_post.data['likes'], -2)
 
-    def test_post_likes_error_receipe(self):
-        url = reverse('api:receipe_likes', kwargs={'receipe_id':1, 'up_down': 'two_down'})
+    def test_post_likes_error_recipe(self):
+        url = reverse('api:recipe_likes', kwargs={'recipe_id':1, 'up_down': 'two_down'})
         response_post = self.client.post(url, format='json')
         self.assertEqual(response_post.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_retrieving_single_receipe_adds_views(self):
-        url = reverse('api:receipe', kwargs={'receipe_id':1})
+    def test_retrieving_single_recipe_adds_views(self):
+        url = reverse('api:recipe', kwargs={'recipe_id':1})
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.data['views'], 2)
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.data['views'], 3)
 
 
-class NoIdeaReceipesAPITests(APITestCase):
+class NoIdearecipesAPITests(APITestCase):
     def setUp(self):
-        Receipe.objects.create(
-            receipe_id = '1',
+        recipe.objects.create(
+            recipe_id = '1',
             url = 'https://www.crockpot.pl/przepis?p=1',
             name = 'Chicken salad',
             slug = 'chicken-salad',
@@ -201,12 +201,12 @@ class NoIdeaReceipesAPITests(APITestCase):
             preparing_time = '30 mins',
             time_on_high = '6h',
             time_on_low = '',
-            receipe_ingredients = 'Chicken, salad, peper, salt',
-            receipe_how_to = 'Place chicken in slow cooker, serve with salad'
+            recipe_ingredients = 'Chicken, salad, peper, salt',
+            recipe_how_to = 'Place chicken in slow cooker, serve with salad'
         )
 
-        Receipe.objects.create(
-            receipe_id = '2',
+        recipe.objects.create(
+            recipe_id = '2',
             url = 'https://www.crockpot.pl/przepis?p=2',
             name = 'Lamb salad',
             slug = 'lamb-salad',
@@ -214,17 +214,17 @@ class NoIdeaReceipesAPITests(APITestCase):
             preparing_time = '40 mins',
             time_on_high = '1h',
             time_on_low = '6h',
-            receipe_ingredients = 'Lamb, salad, peper, salt',
-            receipe_how_to = 'Place lamb in slow cooker, serve with salad'
+            recipe_ingredients = 'Lamb, salad, peper, salt',
+            recipe_how_to = 'Place lamb in slow cooker, serve with salad'
         )
 
-    def test_retrieving_no_idea_receipes_list(self):
-        url = reverse('api:no_idea_receipes')
+    def test_retrieving_no_idea_recipes_list(self):
+        url = reverse('api:no_idea_recipes')
         response_get = self.client.get(url, format='json')
         self.assertEqual(len(response_get.data), 1)
 
-    def test_changing_no_idea_receipes_num(self):
-        url = reverse('api:no_idea_receipes') + "?num=2"
+    def test_changing_no_idea_recipes_num(self):
+        url = reverse('api:no_idea_recipes') + "?num=2"
         response_get = self.client.get(url, format='json')
         self.assertEqual(len(response_get.data), 2)
 
@@ -249,10 +249,10 @@ class WhySlowcookerAPITests(APITestCase):
         self.assertEqual(len(response_get.data), 2)
 
 
-class ReceipeImageAPITests(APITestCase):
+class recipeImageAPITests(APITestCase):
     def setUp(self):
-        saved_receipe = Receipe.objects.create(
-            receipe_id = '1',
+        saved_recipe = recipe.objects.create(
+            recipe_id = '1',
             url = 'https://www.crockpot.pl/przepis?p=1',
             name = 'Chicken salad',
             slug = 'chicken-salad',
@@ -260,11 +260,11 @@ class ReceipeImageAPITests(APITestCase):
             preparing_time = '30 mins',
             time_on_high = '6h',
             time_on_low = '',
-            receipe_ingredients = 'Chicken, salad, peper, salt',
-            receipe_how_to = 'Place chicken in slow cooker, serve with salad'
+            recipe_ingredients = 'Chicken, salad, peper, salt',
+            recipe_how_to = 'Place chicken in slow cooker, serve with salad'
         )
-        ReceipeImage.objects.create(
-            receipe=saved_receipe,
+        recipeImage.objects.create(
+            recipe=saved_recipe,
             image='lorem.jpg'
         )
 
@@ -273,7 +273,7 @@ class ReceipeImageAPITests(APITestCase):
         response_get = self.client.get(url, format='json')
         self.assertEqual(len(response_get.data), 1)
 
-    def test_gallery_related_to_receipe(self):
+    def test_gallery_related_to_recipe(self):
         url = reverse('api:gallery')
         response_get = self.client.get(url, format='json')
         self.assertEqual(response_get.data[0]['name'], "Chicken salad") 
@@ -283,9 +283,9 @@ class ReceipeImageAPITests(APITestCase):
         response_get = self.client.get(url, format='json')        
         self.assertEqual(len(response_get.data[0]['images']), 1) 
 
-        saved_receipe = Receipe.objects.get(receipe_id=1)
-        ReceipeImage.objects.create(
-            receipe=saved_receipe,
+        saved_recipe = recipe.objects.get(recipe_id=1)
+        recipeImage.objects.create(
+            recipe=saved_recipe,
             image='lorem_ipsum.jpg'
         )
         response_get = self.client.get(url, format='json')        

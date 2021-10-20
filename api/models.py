@@ -3,8 +3,8 @@ from django.conf import settings
 from django.template.defaultfilters import slugify
 
 
-class Receipe(models.Model):
-    receipe_id = models.IntegerField(unique=True)
+class recipe(models.Model):
+    recipe_id = models.IntegerField(unique=True)
     url = models.CharField(max_length=255)
     name = models.CharField(max_length=200)
     slug = models.SlugField()
@@ -12,13 +12,13 @@ class Receipe(models.Model):
     preparing_time = models.CharField(max_length=25)
     time_on_high = models.CharField(max_length=25)
     time_on_low = models.CharField(max_length=25)
-    receipe_ingredients = models.TextField()
-    receipe_how_to = models.TextField()
+    recipe_ingredients = models.TextField()
+    recipe_how_to = models.TextField()
     views = models.IntegerField(default=1)
     likes = models.IntegerField(default=0)
 
     class Meta:
-        unique_together = ["receipe_id", "slug"]
+        unique_together = ["recipe_id", "slug"]
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -26,12 +26,12 @@ class Receipe(models.Model):
         return super().save(*args, **kwargs)    
 
     def __str__(self):
-        return " ".join([str(self.receipe_id), self.name])   
+        return " ".join([str(self.recipe_id), self.name])   
 
 
-class ReceipeImage(models.Model):
-    receipe = models.ForeignKey(
-        Receipe, on_delete=models.CASCADE, related_name="images"
+class recipeImage(models.Model):
+    recipe = models.ForeignKey(
+        recipe, on_delete=models.CASCADE, related_name="images"
     )
     image = models.CharField(max_length=255)
 

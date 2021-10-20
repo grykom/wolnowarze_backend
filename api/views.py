@@ -5,10 +5,10 @@ from rest_framework.response import Response
 
 import random
 
-from .models import Receipe, WhySlowcooker
+from .models import recipe, WhySlowcooker
 from .serializers import (
-    ReceipeSerializer,
-    ReceipeGallerySerializer,
+    recipeSerializer,
+    recipeGallerySerializer,
     WhySlowcookerSerializer,
 )
 
@@ -24,17 +24,17 @@ class StandardResultsSetPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class ReceipesView(
+class recipesView(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
     pagination_class = StandardResultsSetPagination
-    serializer_class = ReceipeSerializer
-    lookup_field = "receipe_id"
+    serializer_class = recipeSerializer
+    lookup_field = "recipe_id"
 
     def get_queryset(self):
-        queryset = Receipe.objects.all()
+        queryset = recipe.objects.all()
         findit = self.request.query_params.get("search")
         if findit:
             queryset = queryset.filter(name__contains=findit)
@@ -61,11 +61,11 @@ class ReceipesView(
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class NoIdeaReceipesView(
+class NoIdearecipesView(
     mixins.ListModelMixin,
     viewsets.GenericViewSet
     ):
-    serializer_class = ReceipeSerializer
+    serializer_class = recipeSerializer
 
     def get_queryset(self):
         query_num = self.request.query_params.get("num")
@@ -75,9 +75,9 @@ class NoIdeaReceipesView(
         except (AttributeError, ValueError):
             get_num = 1
 
-        all_values = Receipe.objects.values_list("id", flat=True)
+        all_values = recipe.objects.values_list("id", flat=True)
         rand_entities = random.sample(list(all_values), get_num)
-        queryset = Receipe.objects.filter(id__in=rand_entities)
+        queryset = recipe.objects.filter(id__in=rand_entities)
         return queryset
 
 
@@ -87,13 +87,17 @@ class WhySlowcookerView(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class GalleryView(mixins.ListModelMixin, viewsets.GenericViewSet):
-    serializer_class = ReceipeGallerySerializer
+    serializer_class = recipeGallerySerializer
 
     def get_queryset(self):
-        all_values = Receipe.objects.values_list("id", flat=True)
+        query_num = self.request.query_params.get("num")
         try:
-            rand_entities = random.sample(list(all_values), 9)
-        except ValueError:
-            rand_entities = random.sample(list(all_values), 1)
-        queryset = Receipe.objects.filter(id__in=rand_entities)
+            query_num.isnumeric()
+            get_num = int(query_num)
+        except (AttributeError, ValueError):
+            get_num = 1
+
+        all_values = recipe.objects.values_list("id", flat=True)
+        rand_entities = random.sample(list(all_values), get_num)
+        queryset = recipe.objects.filter(id__in=rand_entities)
         return queryset

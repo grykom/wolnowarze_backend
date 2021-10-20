@@ -2,17 +2,17 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.conf import settings
 
-from .utils import CrockPotRecipe, get_last_crockpot_receipe_id
-from .models import Receipe, ReceipeImage
+from .utils import CrockPotRecipe, get_last_crockpot_recipe_id
+from .models import recipe, recipeImage
 
 
 def cron_pull_data(request):
     try:
-        range_start = Receipe.objects.latest("receipe_id").receipe_id + 1
+        range_start = recipe.objects.latest("recipe_id").recipe_id + 1
     except ObjectDoesNotExist:
         range_start = 1
 
-    range_crockpot_limit = get_last_crockpot_receipe_id()
+    range_crockpot_limit = get_last_crockpot_recipe_id()
     if not range_crockpot_limit:
         return HttpResponseBadRequest("Crockpot down?")
 
@@ -22,21 +22,21 @@ def cron_pull_data(request):
         else range_crockpot_limit
     )
 
-    receipe_creted = []
+    recipe_creted = []
     for i in range(range_start, range_crockpot_limit):
-        receipe = CrockPotRecipe(i)
-        receipe_data = receipe.get_receipe_data()
+        recipe = CrockPotRecipe(i)
+        recipe_data = recipe.get_recipe_data()
 
-        if receipe_data:
-            new_receipe = Receipe.objects.create(**receipe_data)
-            receipe_creted.append(new_receipe)
+        if recipe_data:
+            new_recipe = recipe.objects.create(**recipe_data)
+            recipe_creted.append(new_recipe)
 
-            receipe_image = receipe.get_receipe_images()
-            for image in receipe_image["images"]:
-                ReceipeImage.objects.create(receipe=new_receipe, image=image)
+            recipe_image = recipe.get_recipe_images()
+            for image in recipe_image["images"]:
+                recipeImage.objects.create(recipe=new_recipe, image=image)
 
             cron_fetch_limit -= 1
             if not cron_fetch_limit:
                 break
 
-    return HttpResponse([f"{r} created!<br/>" for r in receipe_creted])
+    return HttpResponse([f"{r} created!<br/>" for r in recipe_creted])

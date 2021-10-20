@@ -7,9 +7,9 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("api/cron/pull-data", cron.cron_pull_data),
     path(
-        "v1/no_idea_receipes",
-        views.NoIdeaReceipesView.as_view({"get": "list"}),
-        name="no_idea_receipes",
+        "v1/no_idea_recipes",
+        views.NoIdearecipesView.as_view({"get": "list"}),
+        name="no_idea_recipes",
     ),
     path(
         "v1/why_slowcooker",
@@ -18,16 +18,16 @@ urlpatterns = [
     ),
     path("v1/gallery", views.GalleryView.as_view({"get": "list"}), name="gallery"),
     path(
-        "v1/receipes", views.ReceipesView.as_view({"get": "list"}), name="receipes_list"
+        "v1/recipes", views.recipesView.as_view({"get": "list"}), name="recipes_list"
     ),
     path(
-        "v1/receipes/<int:receipe_id>/",
-        views.ReceipesView.as_view({"get": "retrieve"}),
-        name="receipe",
+        "v1/recipes/<int:recipe_id>/",
+        views.recipesView.as_view({"get": "retrieve"}),
+        name="recipe",
     ),
     path(
-        "v1/receipes/<int:receipe_id>/likes_<str:up_down>",
-        views.ReceipesView.as_view({"post": "likes"}),
-        name="receipe_likes",
+        "v1/recipes/<int:recipe_id>/likes_<str:up_down>",
+        views.recipesView.as_view({"post": "likes"}),
+        name="recipe_likes",
     ),
 ]
