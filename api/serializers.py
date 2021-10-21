@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import recipe, WhySlowcooker
+from .models import Recipe, WhySlowcooker
 
 
-class recipeSerializer(serializers.ModelSerializer):
+class RecipeSerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
 
     class Meta:
-        model = recipe
+        model = Recipe
         fields = [
             "recipe_id",
             "name",
@@ -23,11 +23,11 @@ class recipeSerializer(serializers.ModelSerializer):
         ]
 
 
-class recipeGallerySerializer(serializers.ModelSerializer):
+class RecipeGallerySerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
 
     class Meta:
-        model = recipe
+        model = Recipe
         fields = ["recipe_id", "name", "slug", "images"]
 
 

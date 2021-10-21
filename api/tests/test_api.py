@@ -2,12 +2,12 @@ from django.db.models import query
 from django.urls import  reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from ..models import recipe, recipeImage, WhySlowcooker
+from ..models import Recipe, RecipeImage, WhySlowcooker
 
 
 class MethodsAPITests(APITestCase):
     def setUp(self):
-        recipe.objects.create(
+        Recipe.objects.create(
             recipe_id = '1',
             url = 'https://www.crockpot.pl/przepis?p=1',
             name = 'Chicken salad',
@@ -94,7 +94,7 @@ class MethodsAPITests(APITestCase):
 
 class recipeAPITests(APITestCase):
     def setUp(self):
-        recipe.objects.create(
+        Recipe.objects.create(
             recipe_id = '1',
             url = 'https://www.crockpot.pl/przepis?p=1',
             name = 'Chicken salad',
@@ -107,7 +107,7 @@ class recipeAPITests(APITestCase):
             recipe_how_to = 'Place chicken in slow cooker, serve with salad'
         )
 
-        recipe.objects.create(
+        Recipe.objects.create(
             recipe_id = '2',
             url = 'https://www.crockpot.pl/przepis?p=2',
             name = 'Lamb salad',
@@ -192,7 +192,7 @@ class recipeAPITests(APITestCase):
 
 class NoIdearecipesAPITests(APITestCase):
     def setUp(self):
-        recipe.objects.create(
+        Recipe.objects.create(
             recipe_id = '1',
             url = 'https://www.crockpot.pl/przepis?p=1',
             name = 'Chicken salad',
@@ -205,7 +205,7 @@ class NoIdearecipesAPITests(APITestCase):
             recipe_how_to = 'Place chicken in slow cooker, serve with salad'
         )
 
-        recipe.objects.create(
+        Recipe.objects.create(
             recipe_id = '2',
             url = 'https://www.crockpot.pl/przepis?p=2',
             name = 'Lamb salad',
@@ -251,7 +251,7 @@ class WhySlowcookerAPITests(APITestCase):
 
 class recipeImageAPITests(APITestCase):
     def setUp(self):
-        saved_recipe = recipe.objects.create(
+        saved_recipe = Recipe.objects.create(
             recipe_id = '1',
             url = 'https://www.crockpot.pl/przepis?p=1',
             name = 'Chicken salad',
@@ -263,7 +263,7 @@ class recipeImageAPITests(APITestCase):
             recipe_ingredients = 'Chicken, salad, peper, salt',
             recipe_how_to = 'Place chicken in slow cooker, serve with salad'
         )
-        recipeImage.objects.create(
+        RecipeImage.objects.create(
             recipe=saved_recipe,
             image='lorem.jpg'
         )
@@ -283,8 +283,8 @@ class recipeImageAPITests(APITestCase):
         response_get = self.client.get(url, format='json')        
         self.assertEqual(len(response_get.data[0]['images']), 1) 
 
-        saved_recipe = recipe.objects.get(recipe_id=1)
-        recipeImage.objects.create(
+        saved_recipe = Recipe.objects.get(recipe_id=1)
+        RecipeImage.objects.create(
             recipe=saved_recipe,
             image='lorem_ipsum.jpg'
         )

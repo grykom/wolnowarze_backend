@@ -3,12 +3,12 @@ from django.http import HttpResponseBadRequest, HttpResponse
 from django.conf import settings
 
 from .utils import CrockPotRecipe, get_last_crockpot_recipe_id
-from .models import recipe, recipeImage
+from .models import Recipe, RecipeImage
 
 
 def cron_pull_data(request):
     try:
-        range_start = recipe.objects.latest("recipe_id").recipe_id + 1
+        range_start = Recipe.objects.latest("recipe_id").recipe_id + 1
     except ObjectDoesNotExist:
         range_start = 1
 
@@ -33,7 +33,7 @@ def cron_pull_data(request):
 
             recipe_image = recipe.get_recipe_images()
             for image in recipe_image["images"]:
-                recipeImage.objects.create(recipe=new_recipe, image=image)
+                RecipeImage.objects.create(recipe=new_recipe, image=image)
 
             cron_fetch_limit -= 1
             if not cron_fetch_limit:

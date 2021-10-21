@@ -5,10 +5,10 @@ from rest_framework.response import Response
 
 import random
 
-from .models import recipe, WhySlowcooker
+from .models import Recipe, WhySlowcooker
 from .serializers import (
-    recipeSerializer,
-    recipeGallerySerializer,
+    RecipeSerializer,
+    RecipeGallerySerializer,
     WhySlowcookerSerializer,
 )
 
@@ -30,11 +30,11 @@ class recipesView(
     viewsets.GenericViewSet
 ):
     pagination_class = StandardResultsSetPagination
-    serializer_class = recipeSerializer
+    serializer_class = RecipeSerializer
     lookup_field = "recipe_id"
 
     def get_queryset(self):
-        queryset = recipe.objects.all()
+        queryset = Recipe.objects.all()
         findit = self.request.query_params.get("search")
         if findit:
             queryset = queryset.filter(name__contains=findit)
@@ -65,7 +65,7 @@ class NoIdearecipesView(
     mixins.ListModelMixin,
     viewsets.GenericViewSet
     ):
-    serializer_class = recipeSerializer
+    serializer_class = RecipeSerializer
 
     def get_queryset(self):
         query_num = self.request.query_params.get("num")
@@ -75,9 +75,9 @@ class NoIdearecipesView(
         except (AttributeError, ValueError):
             get_num = 1
 
-        all_values = recipe.objects.values_list("id", flat=True)
+        all_values = Recipe.objects.values_list("id", flat=True)
         rand_entities = random.sample(list(all_values), get_num)
-        queryset = recipe.objects.filter(id__in=rand_entities)
+        queryset = Recipe.objects.filter(id__in=rand_entities)
         return queryset
 
 
@@ -87,7 +87,7 @@ class WhySlowcookerView(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class GalleryView(mixins.ListModelMixin, viewsets.GenericViewSet):
-    serializer_class = recipeGallerySerializer
+    serializer_class = RecipeGallerySerializer
 
     def get_queryset(self):
         query_num = self.request.query_params.get("num")
@@ -97,7 +97,7 @@ class GalleryView(mixins.ListModelMixin, viewsets.GenericViewSet):
         except (AttributeError, ValueError):
             get_num = 1
 
-        all_values = recipe.objects.values_list("id", flat=True)
+        all_values = Recipe.objects.values_list("id", flat=True)
         rand_entities = random.sample(list(all_values), get_num)
-        queryset = recipe.objects.filter(id__in=rand_entities)
+        queryset = Recipe.objects.filter(id__in=rand_entities)
         return queryset

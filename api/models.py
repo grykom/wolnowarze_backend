@@ -3,7 +3,7 @@ from django.conf import settings
 from django.template.defaultfilters import slugify
 
 
-class recipe(models.Model):
+class Recipe(models.Model):
     recipe_id = models.IntegerField(unique=True)
     url = models.CharField(max_length=255)
     name = models.CharField(max_length=200)
@@ -29,9 +29,9 @@ class recipe(models.Model):
         return " ".join([str(self.recipe_id), self.name])   
 
 
-class recipeImage(models.Model):
+class RecipeImage(models.Model):
     recipe = models.ForeignKey(
-        recipe, on_delete=models.CASCADE, related_name="images"
+        Recipe, on_delete=models.CASCADE, related_name="images"
     )
     image = models.CharField(max_length=255)
 

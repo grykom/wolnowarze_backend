@@ -1,12 +1,12 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.db import IntegrityError
-from ..models import recipe, recipeImage, WhySlowcooker
+from ..models import Recipe, RecipeImage, WhySlowcooker
 
 
 class recipeTestCase(TestCase):
     def setUp(self):
-        recipe.objects.create(
+        Recipe.objects.create(
             recipe_id = '1',
             url = 'https://www.crockpot.pl/przepis?p=1',
             name = 'Chicken salad',
@@ -19,7 +19,7 @@ class recipeTestCase(TestCase):
             recipe_how_to = 'Place chicken in slow cooker, serve with salad'
         )
 
-        recipe.objects.create(
+        Recipe.objects.create(
             recipe_id = '2',
             url = 'https://www.crockpot.pl/przepis?p=2',
             name = 'Lamb salad',
@@ -33,7 +33,7 @@ class recipeTestCase(TestCase):
         )
 
     def test_saving_and_retrieving_part(self):
-        saved_recipes = recipe.objects.all()
+        saved_recipes = Recipe.objects.all()
         self.assertEqual(saved_recipes.count(), 2)
 
         first_saved_recipe = saved_recipes[0]
@@ -42,11 +42,11 @@ class recipeTestCase(TestCase):
         self.assertEqual(second_saved_recipe.name, 'Lamb salad')
 
     def test_string_representation(self):
-        saved_recipe = recipe.objects.all()[0]
+        saved_recipe = Recipe.objects.all()[0]
         self.assertEqual(str(saved_recipe), '1 Chicken salad')
 
     def test_slug_generating(self):
-        recipe = recipe.objects.create(
+        recipe = Recipe.objects.create(
             recipe_id = '3',
             url = 'https://www.crockpot.pl/przepis?p=3',
             name = 'Pork with 2 kg carrots',
@@ -61,11 +61,11 @@ class recipeTestCase(TestCase):
 
     def test_cannot_save_empty_recipe(self):        
         with self.assertRaises(IntegrityError):
-            recipe = recipe.objects.create()
+            recipe = Recipe.objects.create()
             recipe.full_clean()
 
     def test_default_values(self):
-        saved_recipe = recipe.objects.all()[0]
+        saved_recipe = Recipe.objects.all()[0]
         self.assertEqual(saved_recipe.views, 1)
         self.assertEqual(saved_recipe.likes, 0)
 
@@ -82,15 +82,15 @@ class recipeTestCase(TestCase):
             'recipe_ingredients': 'Chicken, salad, peper, salt',
             'recipe_how_to': 'Place chicken in slow cooker, serve with salad'
         }
-        recipe.objects.create(**new_recipe)
+        Recipe.objects.create(**new_recipe)
         with self.assertRaises(IntegrityError):
-            another_recipe = recipe.objects.create(**new_recipe)
+            another_recipe = Recipe.objects.create(**new_recipe)
             another_recipe.full_clean()
 
 
 class recipeImageTestCase(TestCase):
     def setUp(self):
-        recipe.objects.create(
+        Recipe.objects.create(
             recipe_id = '1',
             url = 'https://www.crockpot.pl/przepis?p=1',
             name = 'Chicken salad',
@@ -104,8 +104,8 @@ class recipeImageTestCase(TestCase):
         )
 
     def test_gallery_is_related_to_recipe(self):
-        saved_recipe = recipe.objects.all()[0]
-        gallery = recipeImage.objects.create(recipe=saved_recipe, image='lorem.jpg')
+        saved_recipe = Recipe.objects.all()[0]
+        gallery = RecipeImage.objects.create(recipe=saved_recipe, image='lorem.jpg')
         self.assertIn(gallery, saved_recipe.images.all())
 
 
