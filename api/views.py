@@ -36,7 +36,7 @@ class recipesView(
         queryset = Recipe.objects.all()
         findit = self.request.query_params.get("search")
         if findit:
-            queryset = queryset.filter(name__contains=findit)
+            queryset = queryset.filter(name__icontains=findit.lower())
         return queryset
 
     def retrieve(self, *args, **kwargs):
