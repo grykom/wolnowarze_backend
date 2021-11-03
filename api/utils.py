@@ -56,7 +56,7 @@ class CrockPotRecipe():
                                 int(img_content.height * 1.5)),
                                 resample=5)
                 img_name = f'crockpot_{self.recipe_id}_photo_{i}.jpg'
-                img_resized.save(f"{settings.MEDIA_ROOT}\img\{img_name}", img_content.format)
+                img_resized.save(f"{settings.MEDIA_ROOT}/img/{img_name}", img_content.format)
                 images_list.append(img_name)
             return {
                 "recipe_id": self.recipe_id,

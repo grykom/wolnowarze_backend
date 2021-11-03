@@ -7,7 +7,7 @@ class Recipe(models.Model):
     recipe_id = models.IntegerField(unique=True)
     url = models.CharField(max_length=255)
     name = models.CharField(max_length=200)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=200)
     serving_size = models.CharField(max_length=10)
     preparing_time = models.CharField(max_length=25)
     time_on_high = models.CharField(max_length=25)
