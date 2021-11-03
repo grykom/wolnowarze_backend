@@ -14,8 +14,7 @@ from .serializers import (
 
 
 def home(request):
-    content = {}
-    return render(request, "api/home.html", content)
+    return render(request, "api/index.html")
 
 
 class StandardResultsSetPagination(PageNumberPagination):
