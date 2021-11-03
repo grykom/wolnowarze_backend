@@ -28,7 +28,7 @@ def cron_pull_data(request):
         recipe_data = recipe.get_recipe_data()
 
         if recipe_data:
-            new_recipe = recipe.objects.create(**recipe_data)
+            new_recipe = Recipe.objects.create(**recipe_data)
             recipe_creted.append(new_recipe)
 
             recipe_image = recipe.get_recipe_images()
