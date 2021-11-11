@@ -8,7 +8,6 @@ class HomePageViewTestCase(TestCase):
         found = resolve('/')
         self.assertEqual(found.func, home)
 
-    def test_part_page_return_correct_html(self):
+    def test_part_page_return_correct_status_code(self):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'api/index.html')

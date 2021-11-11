@@ -1,4 +1,6 @@
+from django.http.response import HttpResponse
 from django.shortcuts import render
+from django.template.exceptions import TemplateDoesNotExist
 from rest_framework import status, viewsets, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -14,7 +16,10 @@ from .serializers import (
 
 
 def home(request):
-    return render(request, "api/index.html")
+    try:
+        return render(request, "api/index.html")
+    except TemplateDoesNotExist:
+        return HttpResponse('')
 
 
 class StandardResultsSetPagination(PageNumberPagination):
